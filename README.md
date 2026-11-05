@@ -30,7 +30,7 @@ ros2 launch surface_follower surface_follower2.launch.py
 
 **demo image**
 
-<img width="1680" height="1050" alt="Screenshot for surface_follower_node2" src="https://github.com/user-attachments/assets/fdf32f41-e7f4-48b8-8ec2-916b9ccc1cf3" />
+<img width="1173" height="603" alt="569178cf52f71d98a850b3d1f4d68ea0" src="https://github.com/user-attachments/assets/80479ccf-4f81-4f7b-a914-d7f04c752e71" />
 
 📥 Input topics
 - `/depth/points` (PointCloud2): point cloud for plane fitting
