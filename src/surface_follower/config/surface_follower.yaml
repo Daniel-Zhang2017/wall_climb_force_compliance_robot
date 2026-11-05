@@ -1,13 +1,39 @@
-surface_follower_node:
+surface_follower_node2:
   ros__parameters:
-    # Force control
-    target_normal_force: -20.0
-    kp_force: 0.007
-    # Tangential cruise speed along surface
-    cruise_speed: 0.05
-    # Pointcloud plane fit
-    use_pointcloud_normal: true
-    min_point_count: 15
-    # Frame
-    base_frame: base_link
-    world_frame: world
+    use_sim_time: false
+    target_force_z: -15.0
+    kp_force: 0.02
+    max_vel: 0.15
+    force_deadzone: 0.5
+    marker_length: 0.15
+    enable_gravity_compensation: false
+    gravity_force: [0.0, 0.0, -9.81]
+    sweep_speed: 0.03
+    enable_sweep: true
+    sweep_bounds: 0.4
+    # 对接MoveIt Servo新增参数
+    servo_twist_topic: "/servo_node/delta_twist_cmds"
+    sensor_frame: "ft_sensor_link"
+    planning_frame: "panda_link0"
+    ee_frame: "panda_link8"
+    force_estop_threshold: -25.0
+
+surface_follower_node3:
+  ros__parameters:
+    target_force_z: -15.0
+    kp_force: 0.02
+    max_vel: 0.15
+    force_deadzone: 0.5
+    marker_length: 0.15
+    enable_gravity_comp: false
+    gravity_force: [0.0, 0.0, 0.0]
+    sweep_speed: 0.03
+    enable_sweep: true
+    sweep_bounds: 0.4
+    servo_twist_topic: "/servo_node/delta_twist_cmds"
+    sensor_frame: "ft_sensor_link"
+    planning_frame: "panda_link0"
+    force_estop_threshold: -25.0
+    log_enable: false
+
+

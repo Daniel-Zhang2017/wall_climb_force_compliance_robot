@@ -1,0 +1,42 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /Marker1
+        - /PointCloud21
+      Splitter Ratio: 0.5
+    Tree Height: 557
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Marker
+      Name: Marker
+      Queue Size: 1
+      Topic: /surface_normal_marker
+      Enabled: true
+    - Class: rviz_default_plugins/PointCloud2
+      Name: PointCloud2
+      Topic: /depth/points
+      Enabled: true
+  Global Options:
+    Fixed Frame: ft_sensor_link
+    Frame Rate: 30
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+    - Class: rviz_default_plugins/SetInitialPose
+    - Class: rviz_default_plugins/PublishPoint
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 1.2
+      Name: Orbit
+      Pitch: 0.33
+      Yaw: 0.5

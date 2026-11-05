@@ -14,9 +14,15 @@ setup(
         # launch file
         (os.path.join('share', package_name, 'launch'),
             ['launch/surface_follower.launch.py']),
+        (os.path.join('share', package_name, 'launch'),
+            ['launch/surface_follower2.launch.py']),
+        (os.path.join('share', package_name, 'launch'),
+            ['launch/surface_follower_servo.launch.py']),
         # config yaml
         (os.path.join('share', package_name, 'config'),
             ['config/surface_follower.yaml']),
+        (os.path.join('share', package_name, 'config'),
+            ['config/servo_panda.yaml']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -32,6 +38,8 @@ setup(
     entry_points={
         'console_scripts': [
             "surface_follower_node = surface_follower.surface_follower_node:main",
+            "surface_follower_node2 = surface_follower.surface_follower_node2:main",
+            "surface_follower_node3 = surface_follower.surface_follower_node3:main",
         ],
     },
 )
