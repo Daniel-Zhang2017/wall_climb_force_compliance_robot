@@ -27,6 +27,11 @@ python3 dummy_pc.py #publish point cloud data
 #new terminator
 ros2 launch surface_follower surface_follower2.launch.py
 ```
+
+**demo image**
+
+<img width="1680" height="1050" alt="Screenshot for surface_follower_node2" src="https://github.com/user-attachments/assets/fdf32f41-e7f4-48b8-8ec2-916b9ccc1cf3" />
+
 📥 Input topics
 - `/depth/points` (PointCloud2): point cloud for plane fitting
 - `/ft_sensor/wrench` (WrenchStamped): force-torque sensor measurement
