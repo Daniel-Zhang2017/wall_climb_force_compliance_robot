@@ -1,0 +1,13 @@
+surface_follower_node:
+  ros__parameters:
+    # Force control
+    target_normal_force: -20.0
+    kp_force: 0.007
+    # Tangential cruise speed along surface
+    cruise_speed: 0.05
+    # Pointcloud plane fit
+    use_pointcloud_normal: true
+    min_point_count: 15
+    # Frame
+    base_frame: base_link
+    world_frame: world
