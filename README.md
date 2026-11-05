@@ -6,5 +6,5 @@ ROS2 Humble demo package: Manipulator constant normal force compliance on planar
 
 #### Basic notes:
 
->A **FT (Force/Torque) sensor** in robotics and automation is a multi-axis measurement device—often mounted at a robot's wrist or end-of-arm tooling—that **detects forces and rotational moments (torques)** across six degrees of freedom (F_x, F_y, F_z, M_x, M_y, M_z).
+>1. A **FT (Force/Torque) sensor** in robotics and automation is a multi-axis measurement device—often mounted at a robot's wrist or end-of-arm tooling—that **detects forces and rotational moments (torques)** across six degrees of freedom (F_x, F_y, F_z, M_x, M_y, M_z).
 
