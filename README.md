@@ -4,6 +4,14 @@
 
 ROS2 Humble demo package: Manipulator constant normal force compliance on planar wall, with bump adaptation & force-based E-Stop. Built on ROS2, Nav2, MoveIt2, Gazebo. Suitable for **facade inspection / cleaning / surface contact task prototype**.
 
+### Application scenario: Facade / wall surface cleaning
+This surface follower is designed for end-effector cleaning tasks on building facades, glass walls and panel surfaces.
+The cleaning pad needs consistent contact pressure against the wall while sweeping.
+Surface normal from point cloud aligns the cleaning disk perpendicular to the local wall, and decouples motion into normal and tangential directions.
+Force compliance on the normal direction maintains steady pressing force for cleaning; the end-effector yields automatically over seams and small bumps to avoid scratching the surface or jamming.
+The auto bounce sweep implements back-and-forth wiping motion.
+Note: This demo focuses on end-effector contact compliance only; it does not include vacuum adhesion for wall climbing or full area coverage planner.
+
 ## Summary for surface_follower_node2.py and surface_follower2.launch.py
 This package implements a **geometry + force-based surface follower** for manipulator end-effector, designed for wall-climbing / surface contact tasks (e.g. facade inspection, polishing, cleaning).
 
@@ -73,4 +81,12 @@ ros2 launch surface_follower surface_follower2.launch.py
 #### Basic notes:
 
 >1. A **FT (Force/Torque) sensor** in robotics and automation is a multi-axis measurement device—often mounted at a robot's wrist or end-of-arm tooling—that **detects forces and rotational moments (torques)** across six degrees of freedom (F_x, F_y, F_z, M_x, M_y, M_z).
+>2. **Point cloud source**: default is RGB-D depth camera, viewing the wall approximately along surface normal.The RGB-D camera is eye-in-hand, mounted on the manipulator **end-effector together with the F/T sensor**.
+It faces approximately normal to the wall to capture local surface point cloud for plane fitting.
+>3. This implementation is NOT designed for a 2D LiDAR out of the box.
+A 2D LiDAR (scan plane parallel to wall) requires accumulating sequential scans to reconstruct local surface for normal estimation.
+>4. Surface normal estimation is implemented via **SVD plane fitting**.
+Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vector gives the normal of the locally fitted plane.
+**SVD is chosen here for better numerical stability over covariance-based PCA**.
+
 
