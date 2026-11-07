@@ -12,6 +12,12 @@ Force compliance on the normal direction maintains steady pressing force for cle
 The auto bounce sweep implements back-and-forth wiping motion.
 Note: This demo focuses on end-effector contact compliance only; it does not include vacuum adhesion for wall climbing or full area coverage planner.
 
+## demo videos
+
+**Video 1: surface-follower-servo-horizontal-moving**
+
+https://github.com/user-attachments/assets/609c732a-f2f8-4e91-b309-5a31a628de95
+
 ## Summary for surface_follower_node2.py and surface_follower2.launch.py
 This package implements a **geometry + force-based surface follower** for manipulator end-effector, designed for wall-climbing / surface contact tasks (e.g. facade inspection, polishing, cleaning).
 
@@ -77,6 +83,66 @@ ros2 launch surface_follower surface_follower2.launch.py
 - 还未接入MoveIt Servo、坐标系变换、机械臂力超限急停
 - 平面拟合假设局部区域近似平面
 
+## surface-follower-servo-control
+
+main code: surface_follower_node23.py and surface_follower_servo.launch.py
+
+```
+colcon build
+source install/setup.bash
+
+ros2 launch panda_sim_bringup panda_fake_control.launch.py
+```
+
+```
+#new terminator
+ros2 launch surface_follower surface_follower2.launch.py
+```
+
+```
+#new terminator, start the servo
+ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"
+```
+### MoveIt Servo Loop Control
+Launching `servo_node_main` only loads the node, parameters, collision checker, planning scene monitor and subscribers. **It does NOT start the real-time servo update loop**. Until you call this Trigger service, Servo ignores all `TwistStamped` / `JointJog` / `PoseStamped` jog commands and sends zero commands to the robot
+
+**Why it is designed this way?**
+
+>1. **Safety (the main reason)**
+Servo is for high-frequency velocity jogging (teleop, visual servoing, surface following like your Panda force-control scan). If it started automatically on launch, any stale / misconfigured / accidentally published Twist message would immediately move the arm.
+The service gives you a manual arming step: you verify TF, planning scene, collision model, robot state are all good before enabling motion.
+>2. **Separate initialization from activation**
+   >- After `ros2 launch ... servo.launch.py`: node is alive, parameters parsed, PSM running, status topic publishing.
+   >- After `start_servo`: the real-time servo thread begins reading jog topics, solving IK, checking singularities + self-collision, and outputting joint velocity commands to `joint_trajectory_controller` / `forward_velocity_controller`MoveIt 2.
+>3. **Paired lifecycle controls**
+   
+> 
+> Target: ROS 2 Humble, `moveit_servo == 2.5.10` (Panda Cartesian jogging / surface-follower use case)
+
+This section documents how to safely control the MoveIt Servo real-time servo loop.
+The servo node is **not active immediately after launch**; you must explicitly arm it via service calls before it will process `TwistStamped` jog commands.
+
+> 
+> ⚠️ Important version quirk:
+> `/servo_node/pause_servo` is overloaded with both `std_srvs/srv/SetBool` and `std_srvs/srv/Trigger`.
+> **Do NOT use the `SetBool` interface**, it can cause service waiting/hanging. Always use the `Trigger` services below.
+
+#### Service Table
+
+| Operation | Command | Behavior | Recovery |
+| --- | --- | --- | --- |
+| Start / Arm servo loop | `ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"` | Enable IK, collision checking, velocity output; listen to `/servo_node/delta_twist_cmds` | N/A |
+| Pause servo | `ros2 service call /servo_node/pause_servo std_srvs/srv/Trigger "{}"` | Freeze motion, keep servo node, TF and collision monitor alive | Call `unpause_servo` |
+| Resume / Unpause | `ros2 service call /servo_node/unpause_servo std_srvs/srv/Trigger "{}"` | Resume processing twist commands from running/paused state | N/A |
+| Full stop servo loop | `ros2 service call /servo_node/stop_servo std_srvs/srv/Trigger "{}"` | Disable servo computation, return to idle state | Must call `start_servo` again to re-arm |
+
+## Monitor Servo Status
+
+Inspect runtime state: paused flag, collision, singularity, stale state warnings:
+
+```
+ros2 topic echo /servo_node/status
+```
 
 #### Basic notes:
 
@@ -88,5 +154,6 @@ A 2D LiDAR (scan plane parallel to wall) requires accumulating sequential scans 
 >4. Surface normal estimation is implemented via **SVD plane fitting**.
 Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vector gives the normal of the locally fitted plane.
 **SVD is chosen here for better numerical stability over covariance-based PCA**.
+>5. [rviz2]: **Stereo is NOT SUPPORTED is just an INFO log**, not an error. You can safely ignore it! What it means: Your graphics card or OpenGL setup does not support RViz2's stereoscopic 3D split-screen rendering (VR / dual-display mode). It will not affect normal functionality at all: displaying point clouds, images, TF, lidar, cameras, stereo cameras, and disparity maps will all work perfectly fine.
 
 
