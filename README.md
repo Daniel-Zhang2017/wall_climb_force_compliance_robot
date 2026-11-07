@@ -155,11 +155,11 @@ A 2D LiDAR (scan plane parallel to wall) requires accumulating sequential scans 
 Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vector gives the normal of the locally fitted plane.
 **SVD is chosen here for better numerical stability over covariance-based PCA**.
 >5. [rviz2]: **Stereo is NOT SUPPORTED is just an INFO log**, not an error. You can safely ignore it! What it means: Your graphics card or OpenGL setup does not support RViz2's stereoscopic 3D split-screen rendering (VR / dual-display mode). It will not affect normal functionality at all: displaying point clouds, images, TF, lidar, cameras, stereo cameras, and disparity maps will all work perfectly fine.
->6. - MoveIt2 → 输出轨迹 → 交给 `joint_trajectory_controller`（ros2_control）闭环执行
-   - MoveIt Servo → 持续末端速度指令 → `forward_command_controller`（ros2_control）下发
-   - Servo 报错、关节不动、TF 不更新，**90% 是 ros2_control 链路问题**：
-   - controller 没激活、interface 不匹配
-   - command_interface 名字不一致（position /velocity 搞混）
-   - use_sim_time 不同步、QoS、TF 时间戳冲突
+>6. - MoveIt2 → 输出轨迹 → 交给 **`joint_trajectory_controller`**（ros2_control）闭环执行
+>    - **MoveIt Servo** → 持续末端速度指令 → **`forward_command_controller`**（ros2_control）下发
+>    - Servo 报错、关节不动、TF 不更新，**90% 是 ros2_control 链路问题**：
+>    - controller 没激活、interface 不匹配
+>    - command_interface 名字不一致（position /velocity 搞混）
+>    - use_sim_time 不同步、QoS、TF 时间戳冲突
 
 
