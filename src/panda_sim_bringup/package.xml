@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>panda_sim_bringup</name>
+  <version>0.0.0</version>
+  <description>Bringup for Panda ros2_control fake simulation</description>
+  <maintainer email="hhzhang2016@outlook.com">daniel</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>controller_manager</depend>
+  <depend>rviz2</depend>
+  <depend>moveit_resources_panda_description</depend>
+  <depend>moveit_resources_panda_moveit_config</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
