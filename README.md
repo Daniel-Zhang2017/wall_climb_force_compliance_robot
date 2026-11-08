@@ -2,7 +2,7 @@
 
 ## Overview
 
-ROS2 Humble demo package: Manipulator constant normal force compliance on planar wall, with bump adaptation & force-based E-Stop. Built on ROS2, Nav2, MoveIt2, Gazebo. Suitable for **facade inspection / cleaning / surface contact task prototype**.
+ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation & force-based E-Stop. Built on ROS2, Nav2, MoveIt2, Gazebo. Suitable for **facade inspection / cleaning / surface contact task prototype**.
 
 ### Application scenario: Facade / wall surface cleaning
 This surface follower is designed for end-effector cleaning tasks on building facades, glass walls and panel surfaces.
