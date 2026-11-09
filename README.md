@@ -18,6 +18,26 @@ Note: This demo focuses on end-effector contact compliance only; it does not inc
 
 https://github.com/user-attachments/assets/609c732a-f2f8-4e91-b309-5a31a628de95
 
+# Control Algorithm Comparison (Wall-Following Force Control)
+
+This table compares four control strategies implemented in this surface-following manipulator project, targeting **facade cleaning and compliant surface contact tasks**.
+
+
+| Controller | Core Principle | Pros | Cons | Use Case |
+| --- | --- | --- | --- | --- |
+| **Proportional (P) Control** | Adjust normal velocity directly by force error | Extremely simple, zero integral drift, low computation cost, easy tuning | Static force error exists; no oscillation damping; no explicit constraint handling | Simulation verification, rapid prototyping, basic surface-following validation |
+| **PID Control** | Proportional + integral + derivative feedback | Eliminates steady-state error; widely adopted in industry; lightweight and robust | Prone to integral windup; hard-clipped constraints only; no predictive ability; sensitive to varying surface stiffness | Fast real-world deployment, low-frequency force control, general robotic compliance tasks |
+| **CVXPY MPC (Python)** | Finite-horizon convex optimization | Native constraint support; predictive behaviour; easy model modification in Python | High solver latency; unstable for high-frequency loops; not real-time capable | Algorithm comparison, simulation study, MPC logic validation |
+| **Acados MPC** | Code-generated real-time SQP-RTI optimization | Microsecond-level solving speed; hard/soft constraint support; stable high-frequency closed loop; compatible with real manipulators | Requires compilation environment; model changes require code regeneration | Final physical robot deployment, high-precision compliant cleaning, safety-critical surface contact |
+
+## Summary
+
+For wall-cleaning robotic tasks:
+
+- PID provides reliable and fast deployment.
+- Python-based CVXPY MPC is suitable for algorithm research and comparison.
+- **Acados MPC is the final deployed solution**, offering predictive control and strict velocity constraints to avoid collision, improve contact stability, and adapt to uneven building facades.
+  
 ## Summary for surface_follower_node2.py and surface_follower2.launch.py
 This package implements a **geometry + force-based surface follower** for manipulator end-effector, designed for wall-climbing / surface contact tasks (e.g. facade inspection, polishing, cleaning).
 
@@ -161,5 +181,9 @@ Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vecto
 >    - controller 没激活、interface 不匹配
 >    - command_interface 名字不一致（position /velocity 搞混）
 >    - use_sim_time 不同步、QoS、TF 时间戳冲突
+>7. **Control Algorithm Comparison (Wall-Following Force Control)**: Summary For wall-cleaning robotic tasks:
+>    - PID provides reliable and fast deployment.
+>    - Python-based CVXPY MPC is suitable for algorithm research and comparison.
+>    - **Acados MPC is the final deployed solution**, offering predictive control and strict velocity constraints to avoid collision, improve contact stability, and adapt to uneven building facades.
 
 
