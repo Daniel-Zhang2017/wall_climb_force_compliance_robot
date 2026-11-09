@@ -22,18 +22,29 @@ surface_follower_node3:
   ros__parameters:
     target_force_z: -15.0
     kp_force: 0.02
-    max_vel: 0.15
+    max_vel: 0.25
     force_deadzone: 0.5
     marker_length: 0.15
     enable_gravity_comp: false
     gravity_force: [0.0, 0.0, 0.0]
-    sweep_speed: 0.03
-    enable_sweep: true
-    sweep_bounds: 0.4
+    sweep_speed: 0.20
+    sweep_limit: 4.0
     servo_twist_topic: "/servo_node/delta_twist_cmds"
     sensor_frame: "ft_sensor_link"
     planning_frame: "panda_link0"
     force_estop_threshold: -25.0
-    log_enable: false
+
+    DEBUG_FORCE_MOVE: false
+    enable_sweep: true
+    log_enable: true
+    test_vel_x: 0.2
+    test_vel_z: 0.0
+
+    # ----- Plane marker parameters (match your new shifted plane) -----
+    plane_center_x: 0.3
+    plane_center_y: 0.0
+    plane_z: 0.47
+    plane_size: 0.6
+    plane_alpha: 0.75
 
 

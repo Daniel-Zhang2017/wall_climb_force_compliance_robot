@@ -42,7 +42,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    # panda_hand -> ft_sensor_link static TF
+    # ft_sensor_link attached to panda_link8
     static_tf_sensor = Node(
         package="tf2_ros",
         executable="static_transform_publisher",
@@ -54,7 +54,7 @@ def generate_launch_description():
             "--qy", "0.0",
             "--qz", "0.0",
             "--qw", "1.0",
-            "--frame-id", "panda_hand",
+            "--frame-id", "panda_link8",
             "--child-frame-id", "ft_sensor_link"
         ],
         output="screen",
@@ -74,7 +74,6 @@ def generate_launch_description():
                     moveit_config.to_dict(),
                     servo_param_file,
                 ],
-                # extra_arguments=[{"use_intra_process_comms": True}],
             ),
         ],
         output="screen",

@@ -12,6 +12,24 @@ Force compliance on the normal direction maintains steady pressing force for cle
 The auto bounce sweep implements back-and-forth wiping motion.
 Note: This demo focuses on end-effector contact compliance only; it does not include vacuum adhesion for wall climbing or full area coverage planner.
 
+> Force-controlled surface scanning / surface follower, using FT wrench feedback + point-cloud surface normal estimation.
+> Visualizable target plane in RViz2, with dummy test nodes for rapid validation.
+
+## 📌 Project Overview
+
+This ROS2 package implements a **cartesian force-controlled surface follower** for Franka Panda arm:
+
+- Use FT sensor wrench to maintain constant contact force against a surface
+- Use point cloud (`/depth/points`) to estimate surface normal (SVD plane fitting)
+- Two velocity components:
+  - Normal direction: proportional force feedback (keep target pressing force)
+  - Tangent direction: back-and-forth sweep scan along surface
+- Command velocity via **MoveIt2 Servo** (`delta_twist_cmds`)
+- RViz visualization: transparent reference plane marker + normal/tangent arrow markers
+- Dummy test nodes: synthetic wrench and synthetic point cloud for simulation testing without real hardware
+
+Tested on: **ROS 2 Humble, Ubuntu 22.04, Franka Panda, MoveIt2 Servo, ros2_control**
+
 ## demo videos
 
 **Video 1: surface-follower-servo-horizontal-moving**
@@ -85,7 +103,7 @@ ros2 launch surface_follower surface_follower2.launch.py
 
 ## surface-follower-servo-control
 
-main code: surface_follower_node23.py and surface_follower_servo.launch.py
+main code: surface_follower_node3.py and surface_follower_servo.launch.py
 
 ```
 colcon build
@@ -96,13 +114,59 @@ ros2 launch panda_sim_bringup panda_fake_control.launch.py
 
 ```
 #new terminator
-ros2 launch surface_follower surface_follower2.launch.py
+ros2 launch surface_follower surface_follower_servo.launch.py
+```
+```
+ros2 run surface_follower dummy_pc
+
+ros2 run surface_follower dummy_wrench --ros-args -p fz:=-15.0
 ```
 
 ```
 #new terminator, start the servo
 ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"
 ```
+
+### Open RViz2
+
+Add these displays:
+
+- `TF`
+- `Marker` → topic: `/surface_markers`
+- `PointCloud2` → topic: `/depth/points`
+- `RobotModel` (Panda URDF)
+
+You will see:
+
+- Green semi-transparent plane at `(0.3, 0, 0.55)`
+- Point cloud lying exactly on the plane
+- Cyan arrow: estimated surface normal
+- Yellow arrow: sweep tangent direction
+- Arm sweeps back and forth while maintaining constant contact force
+
+---
+
+## 🧪 Debug Mode
+
+Set `DEBUG_FORCE_MOVE: true` in `surface_follower.yaml`
+
+- Force control is disabled
+- Node sends fixed `test_vel_x / test_vel_z` velocity
+- Useful to verify Servo movement independently of force feedback
+
+---
+
+## 🛠️ How it works
+
+1. **Force feedback**: Compute error between measured Fz and target force → generate velocity along surface normal
+2. **Surface normal estimation**: SVD on point cloud covariance to fit a plane and extract normal vector
+3. **Sweep generation**: Gram-Schmidt orthogonalization to get tangent direction on surface
+4. **Twist transform**: Convert velocity command from FT sensor frame → robot base frame (`panda_link0`)
+5. **MoveIt Servo**: Execute Cartesian velocity commands in real-time
+
+> 
+> The control law is a simple proportional force controller, suitable for slow surface scanning. For production use, you may add low-pass filtering on wrench and point cloud.
+
 ### MoveIt Servo Loop Control
 Launching `servo_node_main` only loads the node, parameters, collision checker, planning scene monitor and subscribers. **It does NOT start the real-time servo update loop**. Until you call this Trigger service, Servo ignores all `TwistStamped` / `JointJog` / `PoseStamped` jog commands and sends zero commands to the robot
 

@@ -2,7 +2,9 @@ moveit_servo:
   ros__parameters:
     move_group_name: "panda_arm"
     planning_frame: "panda_link0"
-    ee_frame: "panda_link8"
+    ee_frame_name: "panda_link8"
+    robot_link_command_frame: "panda_link0"
+    is_primary_planning_scene_monitor: true
 
     command_in_type: "speed_units"
     cartesian_command_in_topic: "/servo_node/delta_twist_cmds"

@@ -40,6 +40,8 @@ setup(
             "surface_follower_node = surface_follower.surface_follower_node:main",
             "surface_follower_node2 = surface_follower.surface_follower_node2:main",
             "surface_follower_node3 = surface_follower.surface_follower_node3:main",
+            "dummy_pc = surface_follower.dummy_pc:main",
+            "dummy_wrench = surface_follower.dummy_wrench:main",
         ],
     },
 )
