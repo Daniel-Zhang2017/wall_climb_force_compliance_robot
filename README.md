@@ -178,6 +178,36 @@ Set `DEBUG_FORCE_MOVE: true` in `surface_follower.yaml`
 - Node sends fixed `test_vel_x / test_vel_z` velocity
 - Useful to verify Servo movement independently of force feedback
 
+### Force Controller
+- Original: Proportional (P) control
+- Updated: PID controller with anti-windup and force deadzone
+$$
+v_{normal} = K_p e + K_i \int e\,dt + K_d \frac{de}{dt}
+$$
+$e = F_z - F_{target,z}$
+- `integral_limit`: clamp integral term to avoid windup
+- Derivative term dampens oscillations from force feedback
+
+
+ros2 launch panda_sim_bringup panda_fake_control.launch.py
+```
+
+```
+#new terminator
+ros2 launch surface_follower surface_follower_servo_pid.launch.py
+```
+```
+ros2 run surface_follower dummy_pc
+
+ros2 run surface_follower dummy_wrench --ros-args -p fz:=-15.0
+```
+
+```
+#new terminator, start the servo
+ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"
+```
+
+
 ---
 
 ## 🛠️ How it works
@@ -253,5 +283,16 @@ Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vecto
 >    - PID provides reliable and fast deployment.
 >    - Python-based CVXPY MPC is suitable for algorithm research and comparison.
 >    - **Acados MPC is the final deployed solution**, offering predictive control and strict velocity constraints to avoid collision, improve contact stability, and adapt to uneven building facades.
+
+> 8. **PID control** notes: 
+> - **为什么只靠比例（P）不够？** 如果只用比例控制（$P = K_p \times \text{Error}$），当机械臂压向表面时，出力会随着误差减小而减小。往往由于机械摩擦、表面不平整、传感器零点漂移或重力补偿不准，当出力接近 -15N（比如达到 -14.2N）时，P 控制产生的微小输出已经不足以继续推动机械臂前进，导致系统停在一个恒定的误差上（即存在稳态偏差，永远达不到精准的 -15.0N）。
+> - must add integral anti-windup必须加积分抗饱和（Anti-Windup）: 什么是积分饱和（Windup）？
+在你的节点参数里有限速保护，例如 max_vel: 0.15 或 0.25（最大运动速度限制）。当机械臂在压向表面时，如果遇到较硬的障碍物或者突变地形，短时间内无法达到期望力，误差（Error）会持续存在并大量累积。因为积分器一直在“疯狂加总”，其输出值可能会远超机械臂的最大速度限制（即执行器饱和了）。会带来什么后果？
+> - 一旦解除卡阻或离开该区域，由于之前累积了极其庞大的积分值，机械臂需要很长时间把这些“历史账”扣除完。这会导致严重的超调（Overshoot）——机械臂会突然猛烈下压或失控弹开，甚至触发安全急停（force_estop_threshold: -25.0）。什么是积分抗饱和（Anti-Windup）？
+>  - 它是软件上的一种保护机制。常见做法包括：积分限幅（Clamping）：限制积分项的最大/最小累加范围，不让它无限变大。条件积分：当执行器已经达到最大速度（饱和）时，暂停积分项的累加，直到执行器恢复正常控制区间。
+> - np.clip(value, min, max): NumPy's clipping function. Its purpose is:
+> - If self.force_integral exceeds the upper limit self.integral_limit, it forces it to be "pressed" down to the upper limit.
+> - If it is below the lower limit -self.integral_limit, it forces it to be "pulled" up to the lower limit.
+> - If it is within the range, it remains unchanged.
 
 
