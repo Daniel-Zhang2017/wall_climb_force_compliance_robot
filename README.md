@@ -188,7 +188,7 @@ $e = F_z - F_{target,z}$
 - `integral_limit`: clamp integral term to avoid windup
 - Derivative term dampens oscillations from force feedback
 
-
+```
 ros2 launch panda_sim_bringup panda_fake_control.launch.py
 ```
 
@@ -206,7 +206,6 @@ ros2 run surface_follower dummy_wrench --ros-args -p fz:=-15.0
 #new terminator, start the servo
 ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"
 ```
-
 
 ---
 
