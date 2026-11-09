@@ -36,6 +36,10 @@ Tested on: **ROS 2 Humble, Ubuntu 22.04, Franka Panda, MoveIt2 Servo, ros2_contr
 
 https://github.com/user-attachments/assets/609c732a-f2f8-4e91-b309-5a31a628de95
 
+**Video 2: surface-follower-servo-moving_on_the_table**
+
+https://github.com/user-attachments/assets/d81a4e6d-09fc-4de3-8cc6-ae716f83fdfb
+
 # Control Algorithm Comparison (Wall-Following Force Control)
 
 This table compares four control strategies implemented in this surface-following manipulator project, targeting **facade cleaning and compliant surface contact tasks**.
