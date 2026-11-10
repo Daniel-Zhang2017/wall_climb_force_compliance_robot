@@ -81,3 +81,40 @@ surface_follower_node4:
     plane_size: 0.6
     plane_alpha: 0.25
 
+# mpc parameters
+surface_follower_node5:
+  ros__parameters:
+    target_force_z: -15.0
+    #--- MPC params ---
+    A: 20.0                     # Force sensitivity: dF/dv (tune this first)
+    horizon_N: 8                # Prediction horizon steps
+    Q_force: 1.0                # Cost weight: force tracking error
+    R_vel: 0.05                 # Cost weight: penalise control input (smooth velocity)
+    R_delta: 0.1                # Cost weight: penalise velocity change (reduce jerk)
+    max_vel: 0.15
+    min_vel: -0.15
+  # ------------------
+    max_vel: 0.4
+    force_deadzone: 0.5
+    marker_length: 0.15
+    enable_gravity_comp: false
+    gravity_force: [0.0, 0.0, 0.0]
+    sweep_speed: 0.2
+    sweep_bounds: 0.6
+    sweep_limit: 2.0
+    servo_twist_topic: "/servo_node/delta_twist_cmds"
+    sensor_frame: "ft_sensor_link"
+    planning_frame: "panda_link0"
+    force_estop_threshold: -25.0
+
+    DEBUG_FORCE_MOVE: false
+    enable_sweep: true
+    log_enable: true
+    test_vel_x: 0.2
+    test_vel_z: 0.0
+
+    plane_center_x: 0.3
+    plane_center_y: 0.0
+    plane_z: 0.55
+    plane_size: 0.6
+    plane_alpha: 0.25

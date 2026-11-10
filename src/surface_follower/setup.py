@@ -20,6 +20,8 @@ setup(
             ['launch/surface_follower_servo.launch.py']),
         (os.path.join('share', package_name, 'launch'),
             ['launch/surface_follower_servo_pid.launch.py']),
+        (os.path.join('share', package_name, 'launch'),
+            ['launch/surface_follower_servo_mpc.launch.py']),
         # config yaml
         (os.path.join('share', package_name, 'config'),
             ['config/surface_follower.yaml']),
@@ -43,6 +45,7 @@ setup(
             "surface_follower_node2 = surface_follower.surface_follower_node2:main",
             "surface_follower_node3 = surface_follower.surface_follower_node3:main",
             "surface_follower_node4 = surface_follower.surface_follower_node4:main",
+            "surface_follower_node5 = surface_follower.surface_follower_node5:main",
             "dummy_pc = surface_follower.dummy_pc:main",
             "dummy_wrench = surface_follower.dummy_wrench:main",
         ],

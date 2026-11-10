@@ -191,21 +191,41 @@ $e = F_z - F_{target,z}$
 ```
 ros2 launch panda_sim_bringup panda_fake_control.launch.py
 ```
-
 ```
 #new terminator
 ros2 launch surface_follower surface_follower_servo_pid.launch.py
 ```
 ```
 ros2 run surface_follower dummy_pc
-
 ros2 run surface_follower dummy_wrench --ros-args -p fz:=-15.0
 ```
-
 ```
 #new terminator, start the servo
 ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"
 ```
+
+### Force Controller
+- Previous: PID with anti-windup
+- Current: Linear MPC (Model Predictive Control)
+Prediction model:
+$$F_{k+1}=F_k + A \cdot v_n \cdot dt$$
+Cost: track target force + penalise velocity + penalise velocity changes for smooth motion.
+Constraints: hard bounds on normal velocity.
+
+```
+ros2 launch panda_sim_bringup panda_fake_control.launch.py
+```
+```
+#new terminator
+ros2 launch surface_follower surface_follower_servo_mpc.launch.py
+```
+```
+ros2 run surface_follower dummy_pc
+ros2 run surface_follower dummy_wrench --ros-args -p fz:=-15.0
+```
+```
+#new terminator, start the servo
+ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"
 
 ---
 
