@@ -313,5 +313,13 @@ Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vecto
 > - If self.force_integral exceeds the upper limit self.integral_limit, it forces it to be "pressed" down to the upper limit.
 > - If it is below the lower limit -self.integral_limit, it forces it to be "pulled" up to the lower limit.
 > - If it is within the range, it remains unchanged.
+>9. **MPC notes**: Important notes & limitation
+> - 1. **Timestep `dt`**: MPC is sensitive to consistent dt. Your control timer should run at fixed frequency (e.g. 10Hz, dt=0.1s). If dt jitters heavily, model mismatch appears.
+> - 2. **Model mismatch**: (F_{k+1}=F_k+A* v_n) is a simple kinematic approximation. This works well for slow surface contact (your sweep speed 0.08 m/s). If you need higher fidelity, we can extend to 2nd-order mass-spring model.
+> - 3. Solver latency: N=8 is trivial for cvxopt; it runs well within 10ms on normal PC.
+> - 4. Constraints advantage over PID:
+  > - - Velocity limits are hard constraints inside optimisation, not just post-clamping
+  > - - You can easily add extra constraints e.g. `f_pred >= force_estop_threshold` to forbid over-force
+   > -- No integral windup
 
 
