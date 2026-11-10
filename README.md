@@ -226,7 +226,7 @@ ros2 run surface_follower dummy_wrench --ros-args -p fz:=-15.0
 ```
 #new terminator, start the servo
 ros2 service call /servo_node/start_servo std_srvs/srv/Trigger "{}"
-
+```
 ---
 
 ## 🛠️ How it works
