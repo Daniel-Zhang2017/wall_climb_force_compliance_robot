@@ -1,0 +1,33 @@
+<!-- 根节点：声明这是一个 MuJoCo 模型，model 名字会显示在 viewer 标题和调试信息里 -->
+<mujoco model="hello_box">
+  <!-- 仿真步长：0.002 秒，也就是 500 Hz。mj_step 每调用一次，仿真时间前进 2 ms -->
+  <option timestep="0.002"/>
+
+  <!-- worldbody 是世界坐标系下的场景根节点；所有直接放在这里的物体都以世界坐标为参考 -->
+  <worldbody>
+    <!-- 灯光：pos 是灯的位置，dir 是照射方向，diffuse 控制漫反射亮度 -->
+    <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
+
+    <!-- 地面：type="plane" 表示无限平面；size 前两个数影响显示范围，第三个数影响接触边界厚度 -->
+    <geom name="ground" type="plane" size="1 1 0.1" rgba=".9 .9 .9 1"/>
+
+    <!-- 一个刚体：pos="0 0 1" 表示盒子初始质心在世界坐标 z=1 的位置 -->
+    <body name="box" pos="0 0 1">
+      <!-- freejoint 给这个刚体 6 自由度；没有它，box 会被固定在世界坐标系中，不会下落 -->
+      <freejoint/>
+
+      <!--
+        盒子的几何体：
+        - type="box" 表示长方体
+        - size 是半尺寸，所以实际长宽高分别是 0.2、0.4、0.6
+        - rgba 分别是红、绿、蓝、透明度，取值范围 0 到 1
+      -->
+      <geom
+        name="box_geom"
+        type="box"
+        size=".1 .2 .3"
+        rgba="0.1 0.6 0.2 1"
+      />
+    </body>
+  </worldbody>
+</mujoco>
