@@ -30,7 +30,7 @@ This ROS2 package implements a **cartesian force-controlled surface follower** f
 
 Tested on: **ROS 2 Humble, Ubuntu 22.04, Franka Panda, MoveIt2 Servo, ros2_control**
 
-## demo videos
+## demo videos/images
 
 **Video 1: surface-follower-servo-horizontal-moving**
 
@@ -40,10 +40,13 @@ https://github.com/user-attachments/assets/609c732a-f2f8-4e91-b309-5a31a628de95
 
 https://github.com/user-attachments/assets/d81a4e6d-09fc-4de3-8cc6-ae716f83fdfb
 
+**Image in mujoco**
+
+<img width="1120" height="700" alt="screenshot" src="https://github.com/user-attachments/assets/4152e5ee-22b4-406b-ac8a-1548a20c0189" />
+
 # Control Algorithm Comparison (Wall-Following Force Control)
 
 This table compares four control strategies implemented in this surface-following manipulator project, targeting **facade cleaning and compliant surface contact tasks**.
-
 
 | Controller | Core Principle | Pros | Cons | Use Case |
 | --- | --- | --- | --- | --- |
