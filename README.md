@@ -55,12 +55,14 @@ https://github.com/user-attachments/assets/d81a4e6d-09fc-4de3-8cc6-ae716f83fdfb
 **Video 3 and Video 4: mujoco simulation: surface-follower-moving-on-the-table**
 
 > MuJoCo simulation of a Franka Panda end-effector tracing a rectangular path while maintaining a constant clearance height above the table surface.
+
+> For MuJoCo basic learning, please refer to the official tutorial: 01_MuJoCo_basics_tutorial.ipynb
   
-**End effector at high speed (instable)**
+**End effector at high speed (unstable)**
 
 https://github.com/user-attachments/assets/0a28c6ce-3cb1-41a1-8c16-7df00ea91582
 
-**End effector at normal speed (stable)**
+**End effector at normal speed (relatively more stable)**
 
 https://github.com/user-attachments/assets/ad95e836-c236-4d48-b6e8-e504b1e78819
 
