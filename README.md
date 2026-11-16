@@ -52,6 +52,44 @@ https://github.com/user-attachments/assets/609c732a-f2f8-4e91-b309-5a31a628de95
 
 https://github.com/user-attachments/assets/d81a4e6d-09fc-4de3-8cc6-ae716f83fdfb
 
+**Video 3 and Video 4: mujoco simulation: surface-follower-moving-on-the-table**
+
+> MuJoCo simulation of a Franka Panda end-effector tracing a rectangular path while maintaining a constant clearance height above the table surface.
+  
+**End effector at high speed (instable)**
+
+https://github.com/user-attachments/assets/0a28c6ce-3cb1-41a1-8c16-7df00ea91582
+
+**End effector at normal speed (stable)**
+
+https://github.com/user-attachments/assets/ad95e836-c236-4d48-b6e8-e504b1e78819
+
+## ✨ Highlights
+- **Constant-height Cartesian tracing**: End-effector maintains fixed distance from the surface during planar movement (decoupled XY constant-speed motion + Z height regulation).
+- **Damped Least-Squares (DLS) IK**: Singularity-robust inverse kinematics for Franka Panda 7-DoF arm; avoids joint velocity blowup near singular configurations.
+- **Tunable Cartesian speed**: Uniform end-effector linear velocity along the trajectory, independent of distance to waypoints.
+- **GitHub-friendly video export pipeline**: Render PNG frames from MuJoCo renderer, then encode with `ffmpeg` to H.264 `yuv420p` MP4 for browser / README preview.
+- **Soft force-compliance ready**: The Cartesian velocity-control framework can be extended to admittance control / force feedback for wall contact and climbing.
+- **Joint limit clamping**: Safety guard to prevent commanded joints from exceeding hardware limits defined in MuJoCo XML.
+
+## 📌 Demo Description
+The simulation runs in two stages:
+1. **Approach**: Arm moves vertically down to the target clearance height above the table.
+2. **Planar tracing**: End-effector traces a rectangular waypoint loop on the horizontal plane while holding constant Z clearance.
+
+## Key Tunable Parameters
+
+```
+tcp_speed = 0.15    # m/s, constant XY tracing speed
+k_z = 2.0           # Z height holding gain
+plane_z = 0.25      # fixed clearance (m) above table
+damping = 0.06      # DLS regularization factor (singularity protection)
+```
+
+- Increase `tcp_speed` for faster tracing
+- Increase `k_z` for tighter height holding; reduce if Z oscillation occurs
+- Increase `damping` if the arm spikes near singular poses
+
 **Image in mujoco**
 
 <img width="1120" height="700" alt="screenshot" src="https://github.com/user-attachments/assets/4152e5ee-22b4-406b-ac8a-1548a20c0189" />
