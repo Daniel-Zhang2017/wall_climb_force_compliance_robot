@@ -1,5 +1,17 @@
 # wall_climb_force_compliance_robot
 
+[![ROS2](https://img.shields.io/badge/ROS2-Humble-orange)](https://docs.ros.org/en/humble/)
+[![Rviz2](https://img.shields.io/badge/Rviz2-Visualization-blue)](https://docs.ros.org/en/humble/Tutorials/Intermediate/RViz/RViz-Main.html)
+[![MuJoCo](https://img.shields.io/badge/MuJoCo-Sim-purple)](https://mujoco.org/)
+[![Nav2](https://img.shields.io/badge/Nav2-Navigation-blue)](https://navigation.ros.org/)
+[![MoveIt2](https://img.shields.io/badge/MoveIt_2-Manipulation-red)](https://moveit.ai/)
+[![Force Control](https://img.shields.io/badge/Force_Control-Compliance-critical)](https://en.wikipedia.org/wiki/Force_control)
+[![E-Stop](https://img.shields.io/badge/E--Stop-Force_Based-red)](https://en.wikipedia.org/wiki/Emergency_stop)
+[![CVXPY](https://img.shields.io/badge/CVXPY-MPC-yellowgreen)](https://www.cvxpy.org/)
+[![Acados](https://img.shields.io/badge/Acados-MPC-yellow)](https://docs.acados.org/)
+[![P](https://img.shields.io/badge/Control-P-lightgrey)](https://en.wikipedia.org/wiki/Proportional_control)
+[![PID](https://img.shields.io/badge/Control-PID-lightblue)](https://en.wikipedia.org/wiki/PID_controller)
+
 ## Overview
 
 ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation & force-based E-Stop. Built on ROS2, Rviz2, MuJoCo, Nav2, MoveIt2. **Control Algorithm Comparison (Wall-Following Force Control)**: P, PID, Python-based CVXPY MPC, Acados MPC. Suitable for **facade inspection / cleaning / surface contact task prototype**.
