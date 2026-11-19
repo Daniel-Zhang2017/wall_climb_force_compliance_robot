@@ -5,44 +5,50 @@ import numpy as np
 import cv2
 
 xml_dir = "../franka_emika_panda"
-xml_filename = "scene_pos.xml"
+xml_filename = "scene_pos2.xml"
 xml_path = os.path.join(xml_dir, xml_filename)
 
 model = mujoco.MjModel.from_xml_path(xml_path)
 data = mujoco.MjData(model)
 
-site_id = model.site("ee_center_site").id
+site_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SITE, "ee_center_site")
 
 # Home joint
 q = np.array([0, -0.785, 0, -2.356, 0, 1.571, 0.785])
 data.qpos[:7] = q
 mujoco.mj_forward(model, data)
+print(f"Initial EE Z = {data.site_xpos[site_id][2]:.4f}")
 
-# IK parameters
+# IK gains
+k_pos = 6.0
 damping = 0.06
 dt = model.opt.timestep
-tcp_speed = 0.55   # m/s, XY tracing speed
-k_z = 2.0          # gain for holding constant Z height
-plane_z = 0.25     # fixed height above table
 
-# Cleaning raster scan parameters
+# Table & hover setting
+table_z = 0.21
+clearance = 0.05
+hover_z = table_z + clearance
+
+# Cleaning scan parameters
 x_start = 0.3
 x_end   = 0.6
 y_min   = 0.0
 y_max   = 0.3
-x_step  = 0.025
-scan_dir = 1   # 1: y+; -1: y-
+x_step  = 0.025   # increase X by this value after each left-right sweep
+scan_direction = 1  # 1: y+, -1: y-
 current_x = x_start
 
-# Motion sequence
-mujoco.mj_forward(model, data)
-p_start = data.site_xpos[site_id].copy()
-p_down_target = np.array([p_start[0], p_start[1], plane_z])
+STALL_TOL = 2e-5
+STALL_COUNT_LIMIT = 80
+stall_counter = 0
+prev_z = data.site_xpos[site_id][2]
 
-stage = 1   # 1: descend to plane, 2: raster cleaning scan
+# First target: go to start scan point
+first_target = np.array([current_x, y_min, hover_z])
+stage = 1   # 1: descend to start point, 2: scan cleaning
 
 # --------------------------
-# Save frames as PNG
+# Save frames as PNG (same method from your reference code)
 # --------------------------
 width, height = 1280, 720
 renderer = mujoco.Renderer(model, width=width, height=height)
@@ -64,66 +70,71 @@ try:
         while viewer.is_running():
             mujoco.mj_forward(model, data)
             p_curr = data.site_xpos[site_id].copy()
+            x_curr, y_curr, z_curr = p_curr
 
+            dp = np.zeros(3)
             if stage == 1:
-                p_des = p_down_target
-                if np.linalg.norm(p_curr - p_down_target) < 0.015:
+                err = first_target - p_curr
+                dp = k_pos * err
+
+                dz = z_curr - prev_z
+                if abs(dz) < STALL_TOL:
+                    stall_counter += 1
+                else:
+                    stall_counter = 0
+                prev_z = z_curr
+
+                print(f"descending to scan start | z={z_curr:.4f}, stall_cnt={stall_counter}")
+                if stall_counter >= STALL_COUNT_LIMIT:
                     stage = 2
-                    print("Reached horizontal plane, start raster cleaning scan")
+                    print(f">>> Start surface cleaning scan, hover z={hover_z:.3f}")
             else:
-                # Raster back-and-forth sweep
-                if scan_dir == 1:
+                # Stage2: back-and-forth scan
+                if scan_direction == 1:
                     target_y = y_max
                 else:
                     target_y = y_min
-                p_des = np.array([current_x, target_y, plane_z])
 
-                # Arrive at y boundary, step X and flip direction
-                if np.isclose(p_curr[1], target_y, atol=0.015):
-                    print(f"✅ Line end: x={current_x:.2f}, y={target_y:.2f}")
+                target_p = np.array([current_x, target_y, hover_z])
+                err = target_p - p_curr
+                dp = k_pos * err
+
+                # Arrived at y end, step X and flip direction
+                if np.isclose(y_curr, target_y, atol=0.015):
+                    print(f"✅ Reached y end: x={current_x:.2f}, y={target_y:.2f}")
                     current_x += x_step
-                    scan_dir *= -1
-                    # Reset scan when out of X range
+                    scan_direction *= -1
+
+                    # Reset scan when hitting x boundary
                     if current_x > x_end:
                         current_x = x_start
-                        scan_dir = 1
+                        scan_direction = 1
                         print("🔁 Scan finished, restart cleaning path")
 
-            # --------------------------
-            # Decoupled XY constant speed + Z height regulation
-            # --------------------------
-            xy_err = p_des[:2] - p_curr[:2]
-            xy_err_norm = np.linalg.norm(xy_err)
-            if xy_err_norm > 1e-6:
-                xy_vel = xy_err / xy_err_norm * tcp_speed
-            else:
-                xy_vel = np.zeros(2)
-
-            z_err = plane_z - p_curr[2]
-            z_vel = k_z * z_err
-
-            v_des = np.array([xy_vel[0], xy_vel[1], z_vel])
-
-            # Damped least squares IK
+            # DLS IK
             J = np.zeros((3, model.nv))
             mujoco.mj_jacSite(model, data, J, None, site_id)
             J = J[:, :7]
-
-            dq = J.T @ np.linalg.inv(J @ J.T + damping**2 * np.eye(3)) @ v_des
+            dq = J.T @ np.linalg.inv(J @ J.T + damping**2 * np.eye(3)) @ dp
             q = q + dq * dt
             q = np.clip(q, model.jnt_range[:7, 0], model.jnt_range[:7, 1])
 
             data.ctrl[:7] = q
-            data.ctrl[7:9] = 0.04  # gripper open
+            data.ctrl[7:9] = 0.04
 
             mujoco.mj_step(model, data)
             viewer.sync()
             record_frame()
 
+            print(f"x: {x_curr:.4f} | y: {y_curr:.4f} | z: {z_curr:.4f}")
+
 except KeyboardInterrupt:
-    print("\nInterrupted by user")
+    print("\nInterrupted")
 finally:
     renderer.close()
-    print(f"Frames saved to {frame_dir}/")
-    print("Run this ffmpeg command to make mp4 for GitHub:")
-    print('ffmpeg -framerate 30 -i frames/frame_%06d.png -c:v libx264 -crf 24 -preset medium -pix_fmt yuv420p -movflags +faststart panda_cleaning_github.mp4')
+
+print(f"Frames saved to {frame_dir}/")
+print("Now run ffmpeg command below:")
+print('ffmpeg -framerate 30 -i frames/frame_%06d.png -c:v libx264 -crf 24 -preset medium -pix_fmt yuv420p -movflags +faststart panda_motion_github.mp4')
+print("Now run ffmpeg command below (2x faster):")
+print('ffmpeg -framerate 30 -i frames/frame_%06d.png -filter:v "setpts=0.5*PTS" -c:v libx264 -crf 24 -preset medium -pix_fmt yuv420p -movflags +faststart panda_motion_github_2x.mp4')
