@@ -92,6 +92,10 @@ damping = 0.06      # DLS regularization factor (singularity protection)
 - Increase `k_z` for tighter height holding; reduce if Z oscillation occurs
 - Increase `damping` if the arm spikes near singular poses
 
+**Video 5: surface scanning across table**
+
+https://github.com/user-attachments/assets/9d195ad4-054e-4332-87a2-800da9742a41
+
 **Image in mujoco**
 
 <img width="1120" height="700" alt="screenshot" src="https://github.com/user-attachments/assets/4152e5ee-22b4-406b-ac8a-1548a20c0189" />
