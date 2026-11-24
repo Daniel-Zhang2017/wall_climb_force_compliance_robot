@@ -14,7 +14,7 @@
 
 ## Overview
 
-ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation & force-based E-Stop. Built on ROS2, Rviz2, MuJoCo, MoveIt2. **Control Algorithm Comparison (Wall-Following Force Control)**: P, PID, Python-based CVXPY MPC, Acados MPC. Add Singularity handling and Safety boundary, Suitable for **facade inspection / cleaning / surface contact task prototype**.
+ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation, **singularity handling, safety boundary** & force-based E-Stop. Built on ROS2, Rviz2, MuJoCo, MoveIt2. **Control Algorithm Comparison (Wall-Following Force Control)**: P, PID, Python-based CVXPY MPC, Acados MPC. Add Singularity handling and Safety boundary, Suitable for **facade inspection / cleaning / surface contact task prototype**.
 
 ### Application scenario: Facade / wall surface cleaning
 This surface follower is designed for end-effector cleaning tasks on building facades, glass walls and panel surfaces.
