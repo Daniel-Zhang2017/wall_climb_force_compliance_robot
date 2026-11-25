@@ -14,7 +14,7 @@
 
 ## Overview
 
-ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation, **singularity handling, safety boundary** & force-based E-Stop. Built on ROS2, Rviz2, MuJoCo, MoveIt2. **Control Algorithm Comparison (Wall-Following Force Control)**: P, PID, Python-based CVXPY MPC, Acados MPC. Add Singularity handling and Safety boundary, Suitable for **facade inspection / cleaning / surface contact task prototype**.
+ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation, **singularity handling, safety boundary** & force-based E-Stop. Built on ROS2, Rviz2, MuJoCo, MoveIt2. **Control Algorithm Comparison (Wall-Following Force Control)**: P, PID, Python-based CVXPY MPC, Acados MPC. Add Singularity handling and Safety boundary, Suitable for **facade inspection / cleaning / surface contact task prototype**. Notes such as DDS, QoS strategies for better real time robotic systems are included.
 
 ### Application scenario: Facade / wall surface cleaning
 This surface follower is designed for end-effector cleaning tasks on building facades, glass walls and panel surfaces.
@@ -454,7 +454,7 @@ Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vecto
 
 > - **Extensible for Hard Real-Time**: For scenarios requiring stricter guarantees, researchers have extended Cyclone DDS with user-space networking (DPDK/XDP). This bypasses the Linux kernel, reducing latency bounds by at least 94% and mean latency by up to 31%.
 
->  ### QoS setting for better real time system
+>  ### QoS strategies for better real time system
 
 > - **要让 Cyclone DDS 的 QoS 更好地服务于实时性，核心思路是在 QoS 策略上为延迟“做减法”，同时在 Cyclone DDS 的内部配置上为处理路径“做优化”。单纯修改标准 QoS 策略往往不够，必须结合其内部参数调整才能显著降低延迟和抖动。**
 
