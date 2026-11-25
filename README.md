@@ -454,4 +454,23 @@ Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vecto
 
 > - **Extensible for Hard Real-Time**: For scenarios requiring stricter guarantees, researchers have extended Cyclone DDS with user-space networking (DPDK/XDP). This bypasses the Linux kernel, reducing latency bounds by at least 94% and mean latency by up to 31%.
 
+>  ### QoS setting for better real time system
+
+> - **要让 Cyclone DDS 的 QoS 更好地服务于实时性，核心思路是在 QoS 策略上为延迟“做减法”，同时在 Cyclone DDS 的内部配置上为处理路径“做优化”。单纯修改标准 QoS 策略往往不够，必须结合其内部参数调整才能显著降低延迟和抖动。**
+
+> 🎯 **核心 QoS 策略调整：权衡可靠性与延迟**
+> - 对于实时系统，首先要明确“实时”更看重确定性低延迟还是数据绝对不丢。在这点上，QoS 的选择至关重要。
+
+> -Reliability（可靠性）设为 BEST_EFFORT：这是降低抖动最直接的手段。RELIABLE 模式虽然保证送达，但一旦丢包就需要重传，这会引入不确定的延迟尖峰。对于周期性传感器数据（如下一帧马上覆盖上一帧），使用 BEST_EFFORT 可以避免因等待重传而造成的阻塞，让延迟更可预测。
+
+> -History（历史）与 Depth（深度）：将 History 设置为 KEEP_LAST 并搭配一个较小的 depth（例如 1）。这能防止因订阅者处理慢而导致队列积压，确保应用总是处理最新的数据，而不是在过时的数据上浪费时间。
+
+> ⚙️ **关键内部配置：打通低延迟路径**
+> -**Cyclone DDS 的许多实时潜力隐藏在其内部配置中，这些配置需要与 QoS 配合才能生效。**
+> -**启用同步交付（Synchronous Delivery）**：默认情况下，数据接收后可能会被放入队列等待异步处理，这会增加延迟。你可以通过配置 Internal/SynchronousDeliveryLatencyBound 和 SynchronousDeliveryPriorityThreshold，让满足特定 LatencyBudget QoS 和 TransportPriority QoS 条件的数据，直接在接收线程中被同步处理，从而绕过队列，获得微秒级的延迟收益。
+
+> -**优化心跳间隔（Heartbeat Interval）**：如果你必须使用 RELIABLE QoS，那么重传检测的速度就至关重要。默认心跳间隔是 100ms，对于实时系统来说太慢了。你可以将 Internal/HeartbeatInterval 大幅降低（例如到 5ms），这样一旦发生丢包，系统能更快地发现并请求重传，将恢复时间从百毫秒级压缩到毫秒级。
+
+> -**扩大系统套接字缓冲区**：这是经常被忽视但很关键的一步。如果操作系统的默认接收缓冲区太小，高频率的数据流可能导致丢包。你需要修改系统参数（如 net.core.rmem_max），将其设置得足够大（Cyclone DDS 官方曾建议最大值可达 2GB），以容纳突发流量，避免因内核丢包而触发不必要的重传或延迟。
+
 
