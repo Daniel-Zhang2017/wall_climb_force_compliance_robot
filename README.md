@@ -14,7 +14,7 @@
 
 ## Overview
 
-ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation, **singularity handling, safety boundary** & force-based E-Stop. Built on ROS2, Rviz2, MuJoCo, MoveIt2. **Control Algorithm Comparison (Wall-Following Force Control)**: P, PID, Python-based CVXPY MPC, Acados MPC. Add Singularity handling and Safety boundary, Suitable for **facade inspection / cleaning / surface contact task prototype**. Notes such as DDS, QoS strategies for better real time robotic systems are included.
+ROS2 Humble demo package: Manipulator constant normal **force compliance (force control)** on planar wall, with bump adaptation, **singularity handling, safety boundary** & force-based E-Stop. Built on ROS2, Rviz2, MuJoCo, MoveIt2. **Control Algorithm Comparison (Wall-Following Force Control)**: P, PID, Python-based CVXPY MPC, Acados MPC. Add Singularity handling and Safety boundary, Suitable for **inspection / cleaning / surface contact task prototype**. Engineering notes such as **DDS, QoS strategies** for better real time robotic systems are included.
 
 ### Application scenario: Facade / wall surface cleaning
 This surface follower is designed for end-effector cleaning tasks on building facades, glass walls and panel surfaces.
@@ -377,9 +377,9 @@ Mathematically this is **equivalent to PCA**: the smallest singular/ eigen vecto
 > - 2. **Model mismatch**: (F_{k+1}=F_k+A* v_n) is a simple kinematic approximation. This works well for slow surface contact (your sweep speed 0.08 m/s). If you need higher fidelity, we can extend to 2nd-order mass-spring model.
 > - 3. Solver latency: N=8 is trivial for cvxopt; it runs well within 10ms on normal PC.
 > - 4. Constraints advantage over PID:
-  > - - Velocity limits are hard constraints inside optimisation, not just post-clamping
-  > - - You can easily add extra constraints e.g. `f_pred >= force_estop_threshold` to forbid over-force
-   > -- No integral windup
+  > - Velocity limits are hard constraints inside optimisation, not just post-clamping
+  > -  You can easily add extra constraints e.g. `f_pred >= force_estop_threshold` to forbid over-force
+   > -No integral windup
 
 >10. ### Singularity handling and Safety boundary
 
